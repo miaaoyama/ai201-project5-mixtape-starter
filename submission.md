@@ -1,7 +1,11 @@
 # Project 5 – Mixtape Bug Hunt Submission
 
-## Codebase Map
+## AI Assistance
 
+I used Claude to help trace the route to service flow from `routes/songs.py` to `notification_service.rate_song()`. I also used it to compare `add_to_playlist()` and `rate_song()` to understand why one created notifications and the other did not. After AI pointed out suspicious logic, I verified it myself by reading the source code and running the relevant tests before and after each fix.
+
+
+## Codebase Map
 ### Main Files and Responsibilities
 
 * **app.py** – Creates the Flask application, initializes the database, and registers the application's routes.
