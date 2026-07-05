@@ -42,45 +42,15 @@ The project follows a layered architecture. Route files are responsible for hand
 
 ## Issue #1 – Listening streak resets on Sunday
 
-**Issue:** Listening streaks reset when a user listened on Saturday and again on Sunday.
-
-**Root Cause:** The streak logic contained an additional condition that prevented streaks from incrementing whenever the current day was Sunday (`today.weekday() != 6`).
-
-**How I Reproduced It:** Running `pytest tests/test_streaks.py` caused the Sunday streak test to fail.
-
-**Fix:** Removed the unnecessary Sunday check so the streak increments whenever the user listened exactly one day earlier.
-
-**Verification:** All streak tests passed after the change.
-
----
+**How I reproduced it:** I ran `pytest tests/test_streaks.py`. The failing test created a Saturday listening event followed by a Sunday listening event. The streak stayed at 1 instead of increasing to 2.
 
 ## Issue #4 – Song rating notifications were missing
 
-**Issue:** Users received notifications when their songs were added to playlists but not when someone rated their songs.
-
-**Root Cause:** The `rate_song()` function saved ratings but never created a notification for the original song owner.
-
-**How I Reproduced It:** Comparing `add_to_playlist()` with `rate_song()` showed that only the playlist function created notifications.
-
-**Fix:** Added notification creation after saving a rating whenever someone other than the original owner rated the song.
-
-**Verification:** All project tests continued to pass after the change.
-
----
+**How I reproduced it:** I compared the working playlist notification path with the rating path. `add_to_playlist()` created a notification after a user added someone else's song, but `rate_song()` only saved the rating and returned it. The missing condition was rating a song shared by another user.
 
 ## Issue #5 – Final playlist song missing
 
-**Issue:** The final song in every playlist was omitted.
-
-**Root Cause:** `get_playlist_songs()` returned `songs[:-1]`, which slices off the final element of the list.
-
-**How I Reproduced It:** Running `pytest tests/test_playlists.py` showed that only four songs were returned instead of five.
-
-**Fix:** Returned the complete list by removing the slice.
-
-**Verification:** All playlist tests passed after the change.
-
----
+**How I reproduced it:** I ran `pytest tests/test_playlists.py`. The playlist test seeded a playlist with 5 songs, but `get_playlist_songs()` returned only 4 songs. The returned titles stopped at Track 4 instead of including Track 5.
 
 ## Testing
 
